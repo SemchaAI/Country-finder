@@ -2,8 +2,7 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { loadbordersInfo } from "../store/details/detailsActions";
-import { selectDetailsBorders } from "../store/details/detailsSelectors";
+import { loadBordersDetails, selectDetailsBorders } from "./detailsSlice";
 
 const Wrapper = styled.section`
   margin-top: 3rem;
@@ -110,13 +109,12 @@ export const Info = (props) => {
 
   useEffect(() => {
     //borders.map((border) => {
-    dispatch(loadbordersInfo(borders));
+    dispatch(loadBordersDetails(borders));
     //    console.log("im here");
     //  });
   }, []);
 
   const locBorders = useSelector(selectDetailsBorders);
-  console.log(locBorders);
 
   return (
     <Wrapper>

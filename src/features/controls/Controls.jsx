@@ -2,13 +2,7 @@ import styled from "styled-components";
 
 import { Search } from "./Search";
 import { CustomSelect } from "./CustomSelect";
-import { useDispatch, useSelector } from "react-redux";
-import { setClear, setRegion } from "../store/controls/controlsActions";
-import {
-  selectControls,
-  selectRegion,
-} from "../store/controls/controlsSelectors";
-import { useEffect } from "react";
+import { useRegions } from "../../hooks/useRegions";
 
 const optionsMap = {
   All: { value: "", label: "All" },
@@ -33,18 +27,7 @@ const Wrapper = styled.div`
 `;
 
 export const Controls = () => {
-  const dispatch = useDispatch();
-  const region = useSelector(selectRegion);
-  console.log(region);
-
-  //const [region, setRegion] = useState("");
-
-  //const [query, setQuery] = useState("");
-
-  const regionHandler = (e) => {
-    console.log(e.value === "");
-    dispatch(setRegion(e.value));
-  };
+  const [region, regionHandler] = useRegions();
 
   return (
     <Wrapper>
