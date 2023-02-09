@@ -11,7 +11,7 @@ export const ThemeSwitcher = () => {
         <IoMoonOutline size="14px" />
       ) : (
         <IoMoon size="14px" />
-      )}{" "}
+      )}
       <span>{currentTheme} Theme</span>
     </div>
   );

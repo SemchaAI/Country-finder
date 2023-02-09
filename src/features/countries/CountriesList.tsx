@@ -1,23 +1,25 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
-import { List } from "../../components/List";
-import { Card } from "../../components/Card";
+import { List } from "components/List";
+import { Card } from "components/Card";
 
+import { loadCountries } from "./countriesSlice";
+import { CountryInfo } from "types";
 import {
-  loadCountries,
   selectCountriesInfo,
   selectSearchCountries,
-} from "./countriesSlice";
-import { selectControls } from "../controls/controlsSlice";
+} from "./countriesSelectors";
+import { RootState, useAppDispatch } from "store";
+import { selectControls } from "features/controls/controlsSelectors";
 
 export const CountriesList = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { search, region } = useSelector(selectControls);
 
-  const countries = useSelector((state) =>
+  const countries = useSelector((state: RootState) =>
     selectSearchCountries(state, { search, region })
   );
 
@@ -42,7 +44,7 @@ export const CountriesList = () => {
       {status === "received" && (
         <List>
           {countries.map((c) => {
-            const countryInfo = {
+            const countryInfo: CountryInfo = {
               img: c.flags.png,
               name: c.name,
               info: [
@@ -64,7 +66,7 @@ export const CountriesList = () => {
             return (
               <Card
                 key={c.name}
-                onClick={() => navigate(`/country/${c.name}`)}
+                onClick={() => void navigate(`/country/${c.name}`)}
                 {...countryInfo}
               />
             );

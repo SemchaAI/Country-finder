@@ -1,19 +1,29 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, Slice } from "@reduxjs/toolkit";
+import { Country, Extra, status } from "types";
 
-export const loadDetails = createAsyncThunk(
-  "@@details/loadDetails",
-  (link, { extra: { client, api } }) => {
-    return client.get(api.searchByCountry(link));
-  }
-);
-export const loadBordersDetails = createAsyncThunk(
-  "@@details/loadBorders",
-  async (borders, { extra: { client, api } }) => {
-    return client.get(api.filterByCode(borders));
-  }
-);
+export const loadDetails = createAsyncThunk<
+  { data: Country[] },
+  string,
+  { extra: Extra }
+>("@@details/loadDetails", (link, { extra: { client, api } }) => {
+  return client.get(api.searchByCountry(link));
+});
+export const loadBordersDetails = createAsyncThunk<
+  { data: Country[] },
+  string[],
+  { extra: Extra }
+>("@@details/loadBorders", async (borders, { extra: { client, api } }) => {
+  return client.get(api.filterByCode(borders));
+});
 
-const initialState = {
+interface initState {
+  status: status;
+  error: string | null;
+  details: null | Country;
+  borders: string[];
+}
+
+const initialState: initState = {
   status: "idle", //loading | received | rejected
   error: null,
   details: null,
@@ -22,7 +32,7 @@ const initialState = {
 
 const detailsSlice = createSlice({
   name: "@@details",
-  initialState: initialState,
+  initialState,
   reducers: {
     clearDetails: () => initialState,
   },
@@ -50,24 +60,14 @@ const detailsSlice = createSlice({
         (action) => action.type.endsWith("/rejected"),
         (state, action) => {
           state.status = "rejected";
-          state.error = action.payload || action.meta.error;
+          state.error = action.payload;
         }
       );
   },
 });
 
-export const { setDetails, clearDetails } = detailsSlice.actions;
+export const { clearDetails } = detailsSlice.actions;
 export const detailsReducer = detailsSlice.reducer;
-
-//SELECTORS
-export const selectCountriesInfo = (state) => ({
-  status: state.countries.status,
-  error: state.countries.error,
-  qty: state.countries.list.length,
-});
-
-export const selectDetails = (state) => state.country.details;
-export const selectDetailsBorders = (state) => state.country.borders;
 
 //   .addCase(loadDetails.pending, (state, action) => {
 //     state.status = "loading";

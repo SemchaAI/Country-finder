@@ -32,12 +32,12 @@ const Input = styled.input.attrs({
 
 export const Search = () => {
   const [search, handleChange, handleKeyPress] = useSearch();
+
   return (
     <InputContainer>
       <IoSearch />
       <Input
         onChange={handleChange}
-        type="text"
         onKeyDown={handleKeyPress}
         defaultValue={search}
       />

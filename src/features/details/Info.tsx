@@ -1,8 +1,12 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import { Navigate, NavigateFunction } from "react-router-dom";
+import { useAppDispatch } from "store";
 import styled from "styled-components";
-import { loadBordersDetails, selectDetailsBorders } from "./detailsSlice";
+import { Country } from "types";
+import { selectDetailsBorders } from "./countryDetailed-selectors";
+import { loadBordersDetails } from "./detailsSlice";
 
 const Wrapper = styled.section`
   margin-top: 3rem;
@@ -90,8 +94,12 @@ const Tag = styled.span`
   cursor: pointer;
 `;
 
-export const Info = (props) => {
-  const dispatch = useDispatch();
+interface InfoProps extends Country {
+  push: NavigateFunction;
+}
+
+export const Info = (props: InfoProps) => {
+  const dispatch = useAppDispatch();
   const {
     name,
     nativeName,
@@ -108,10 +116,7 @@ export const Info = (props) => {
   } = props;
 
   useEffect(() => {
-    //borders.map((border) => {
     dispatch(loadBordersDetails(borders));
-    //    console.log("im here");
-    //  });
   }, []);
 
   const locBorders = useSelector(selectDetailsBorders);

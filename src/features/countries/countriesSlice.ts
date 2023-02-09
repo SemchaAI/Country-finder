@@ -1,13 +1,43 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { Country, Extra, status } from "types";
 
-export const loadCountries = createAsyncThunk(
+export const loadCountries = createAsyncThunk<
+  { data: Country[] },
+  undefined,
+  {
+    state: { countries: CountrySlice };
+    extra: Extra;
+    rejectValue: string;
+  }
+>(
   "@@countries/loadCountries",
-  async (_, { extra: { client, api } }) => {
-    return client.get(api.ALL_COUNTRIES);
+  async (_, { extra: { client, api }, rejectWithValue }) => {
+    try {
+      return client.get(api.ALL_COUNTRIES);
+    } catch (error) {
+      if (error instanceof Error) return rejectWithValue(error.message);
+      return rejectWithValue("Unknown err");
+    }
+  },
+  {
+    condition: (_, { getState }) => {
+      const {
+        countries: { status },
+      } = getState();
+      if (status === "loading") {
+        return false;
+      }
+    },
   }
 );
 
-const initialState = {
+export type CountrySlice = {
+  status: status;
+  error: null | string;
+  list: Country[];
+};
+
+const initialState: CountrySlice = {
   status: "idle", //loading | received | rejected
   error: null,
   list: [],
@@ -27,7 +57,7 @@ const countriesSlice = createSlice({
       })
       .addCase(loadCountries.rejected, (state, action) => {
         state.status = "rejected";
-        state.error = action.payload || action.meta.error;
+        state.error = action.payload || "Cannot load data"; //|| action.meta.error;
       })
       .addCase(loadCountries.fulfilled, (state, action) => {
         state.status = "received";
@@ -39,26 +69,3 @@ const countriesSlice = createSlice({
 
 export const { setCountries } = countriesSlice.actions;
 export const countriesReducer = countriesSlice.reducer;
-export const selectCountries = (state) => state.countries;
-
-//SELECTORS
-export const selectCountriesInfo = (state) => ({
-  status: state.countries.status,
-  error: state.countries.error,
-  qty: state.countries.list.length,
-});
-
-export const selectAllCountries = (state) => {
-  //console.log("selectAllCountries");
-  return state.countries.list;
-};
-
-export const selectSearchCountries = (state, { search = "", region = "" }) => {
-  return state.countries.list.filter((pos) => {
-    // console.log(search.toLowerCase());
-    return (
-      pos.name.toLowerCase().includes(search.toLowerCase()) &&
-      pos.region.toLowerCase().includes(region.toLowerCase())
-    );
-  });
-};

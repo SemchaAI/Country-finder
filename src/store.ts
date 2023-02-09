@@ -2,7 +2,6 @@ import axios from "axios";
 import * as api from "./config";
 
 import { loadState, saveState } from "./localStorage";
-import { throttle } from "lodash";
 import { themeReducer } from "./features/theme/themeSlice";
 
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
@@ -21,6 +20,7 @@ import {
 import { controlsReducer } from "./features/controls/controlsSlice";
 import { countriesReducer } from "./features/countries/countriesSlice";
 import { detailsReducer } from "./features/details/detailsSlice";
+import { useDispatch } from "react-redux";
 
 const rootReducer = combineReducers({
   theme: themeReducer,
@@ -36,6 +36,8 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
+type ignoreActions = string[];
+
 export const store = configureStore({
   reducer: persistedReducer,
   devTools: true,
@@ -43,7 +45,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoreActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
       thunk: {
         extraArgument: {
@@ -64,3 +66,8 @@ export const store = configureStore({
 //   }, 1000)
 // );
 export const persistor = persistStore(store);
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+export const useAppDispatch: () => AppDispatch = useDispatch;
