@@ -3,4 +3,4 @@
 You can find here 3 brances: \
    project on react-redux (JS), \
    proj on react/redux-toolkit (JS),\
-   proj on react/redux-toolkit (TS).\
+   proj on react/redux-toolkit (TS).
