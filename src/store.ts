@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as api from "./config";
 
-import { loadState, saveState } from "./localStorage";
+import { loadState } from "./localStorage";
 import { themeReducer } from "./features/theme/themeSlice";
 
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
@@ -35,8 +35,6 @@ const persistConfig = {
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
-
-type ignoreActions = string[];
 
 export const store = configureStore({
   reducer: persistedReducer,
